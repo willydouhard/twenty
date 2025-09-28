@@ -5,7 +5,7 @@ set -e
 make redis-on-docker
 make postgres-on-docker
 
-yarn install
+yarn
 
 ./nx database:reset twenty-server
 
