@@ -7,6 +7,8 @@ make postgres-on-docker || echo "Postgres already running, continuing"
 
 yarn
 
+# Building sequentially to avoid exhausting memory
+
 echo "Resetting database"
 ./nx database:reset twenty-server > /dev/null
 
@@ -22,11 +24,13 @@ echo "Building UI"
 # Ensure log directory exists
 mkdir -p "$TWILL_ENTRYPOINT_LOG_DIR"
 
-nohup ./nx start twenty-server > "$TWILL_ENTRYPOINT_LOG_DIR/server.log" 2>&1 &
-nohup ./nx worker twenty-server > "$TWILL_ENTRYPOINT_LOG_DIR/worker.log" 2>&1 &
-nohup ./nx start twenty-front > "$TWILL_ENTRYPOINT_LOG_DIR/front.log" 2>&1 &
-
-echo "Frontend starting on http://localhost:3001"
 echo "GraphQL API starting on http://localhost:3000/graphql"
 echo "REST API starting on http://localhost:3000/rest"
+nohup ./nx start twenty-server > "$TWILL_ENTRYPOINT_LOG_DIR/server.log" 2>&1 &
+
+nohup ./nx worker twenty-server > "$TWILL_ENTRYPOINT_LOG_DIR/worker.log" 2>&1 &
+
+echo "Frontend starting on http://localhost:3001"
+nohup ./nx start twenty-front > "$TWILL_ENTRYPOINT_LOG_DIR/front.log" 2>&1 &
+
 
