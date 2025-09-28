@@ -7,9 +7,17 @@ make postgres-on-docker || echo "Postgres already running, continuing"
 
 yarn
 
+echo "Resetting database"
 ./nx database:reset twenty-server > /dev/null
 
+echo "Building server"
 ./nx build twenty-server
+
+echo "Typechecking server"
+./nx typecheck twenty-server
+
+echo "Building UI"
+./nx build twenty-ui
 
 # Ensure log directory exists
 mkdir -p "$TWILL_ENTRYPOINT_LOG_DIR"
