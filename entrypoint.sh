@@ -2,8 +2,8 @@
 
 set -e
 
-make redis-on-docker
-make postgres-on-docker
+make redis-on-docker || echo "Redis already running, continuing"
+make postgres-on-docker || echo "Postgres already running, continuing"
 
 yarn
 
