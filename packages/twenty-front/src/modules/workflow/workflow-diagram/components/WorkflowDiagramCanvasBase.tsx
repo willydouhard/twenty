@@ -60,6 +60,7 @@ const StyledResetReactflowStyles = styled.div`
   height: 100%;
   width: 100%;
   position: relative;
+  overflow: hidden;
 
   /* Below we reset the default styling of Reactflow */
   .react-flow__node-input,
@@ -489,7 +490,7 @@ export const WorkflowDiagramCanvasBase = ({
         onPaneContextMenu={onPaneContextMenu}
         nodesConnectable={nodesConnectable}
         paneClickDistance={10} // Fix small unwanted user dragging does not select node
-        preventScrolling={false}
+        preventScrolling={true}
         connectionLineComponent={WorkflowDiagramConnection}
         connectionRadius={0}
       >
