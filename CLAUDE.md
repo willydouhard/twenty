@@ -125,6 +125,8 @@ packages/
 
 ## Development Workflow
 
+Always use context7 when I need code generation, setup or configuration steps, or library/API documentation. This means you should automatically use the Context7 MCP tools to resolve library id and get library docs without me having to explicitly ask.
+
 ### Before Making Changes
 1. Always run linting and type checking after code changes
 2. Test changes with relevant test suites
