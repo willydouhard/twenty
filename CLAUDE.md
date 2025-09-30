@@ -31,7 +31,7 @@ npx nx storybook:build twenty-front         # Build Storybook
 npx nx storybook:serve-and-test:static twenty-front     # Run Storybook tests
 
 
-When testing the UI end to end, click on "Continue With Email" and use the prefilled credentials. 
+When testing the UI end to end, click on "Continue with Email" and use the prefilled credentials. 
 ```
 
 ### Code Quality
