@@ -6,7 +6,11 @@ set -e
 if [ -n "$(docker ps -aq -f name=^twenty_redis$)" ]; then
   if [ -z "$(docker ps -q -f name=^twenty_redis$)" ]; then
     echo "Starting existing Redis container twenty_redis"
-    docker start twenty_redis >/dev/null
+    if ! docker start twenty_redis >/dev/null 2>&1; then
+      echo "Redis start failed, retrying once..."
+      sleep 1
+      docker start twenty_redis >/dev/null 2>&1 || echo "Redis start failed after retry"
+    fi
   else
     echo "Redis container twenty_redis already running"
   fi
@@ -18,7 +22,11 @@ fi
 if [ -n "$(docker ps -aq -f name=^twenty_pg$)" ]; then
   if [ -z "$(docker ps -q -f name=^twenty_pg$)" ]; then
     echo "Starting existing Postgres container twenty_pg"
-    docker start twenty_pg >/dev/null
+    if ! docker start twenty_pg >/dev/null 2>&1; then
+      echo "Postgres start failed, retrying once..."
+      sleep 1
+      docker start twenty_pg >/dev/null 2>&1 || echo "Postgres start failed after retry"
+    fi
   else
     echo "Postgres container twenty_pg already running"
   fi
