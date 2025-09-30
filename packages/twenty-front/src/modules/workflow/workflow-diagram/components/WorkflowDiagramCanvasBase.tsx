@@ -489,7 +489,7 @@ export const WorkflowDiagramCanvasBase = ({
         onPaneContextMenu={onPaneContextMenu}
         nodesConnectable={nodesConnectable}
         paneClickDistance={10} // Fix small unwanted user dragging does not select node
-        preventScrolling={false}
+        preventScrolling={true}
         connectionLineComponent={WorkflowDiagramConnection}
         connectionRadius={0}
       >
