@@ -2,8 +2,37 @@
 
 set -e
 
-make redis-on-docker || echo "Redis already running, continuing"
-make postgres-on-docker || echo "Postgres already running, continuing"
+# Ensure Redis container is running
+if [ -n "$(docker ps -aq -f name=^twenty_redis$)" ]; then
+  if [ -z "$(docker ps -q -f name=^twenty_redis$)" ]; then
+    echo "Starting existing Redis container twenty_redis"
+    if ! docker start twenty_redis >/dev/null 2>&1; then
+      echo "Redis start failed, retrying once..."
+      sleep 1
+      docker start twenty_redis >/dev/null 2>&1 || echo "Redis start failed after retry"
+    fi
+  else
+    echo "Redis container twenty_redis already running"
+  fi
+else
+  make redis-on-docker || echo "Redis setup command failed"
+fi
+
+# Ensure Postgres container is running
+if [ -n "$(docker ps -aq -f name=^twenty_pg$)" ]; then
+  if [ -z "$(docker ps -q -f name=^twenty_pg$)" ]; then
+    echo "Starting existing Postgres container twenty_pg"
+    if ! docker start twenty_pg >/dev/null 2>&1; then
+      echo "Postgres start failed, retrying once..."
+      sleep 1
+      docker start twenty_pg >/dev/null 2>&1 || echo "Postgres start failed after retry"
+    fi
+  else
+    echo "Postgres container twenty_pg already running"
+  fi
+else
+  make postgres-on-docker || echo "Postgres setup command failed"
+fi
 
 yarn
 
