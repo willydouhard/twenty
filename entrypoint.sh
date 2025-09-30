@@ -7,21 +7,15 @@ make postgres-on-docker || echo "Postgres already running, continuing"
 
 yarn
 
+echo "Checking database initialization status"
 
-echo "Resetting database"
-./nx database:reset twenty-server > /dev/null
-
-
-# Building sequentially to avoid exhausting memory
-
-# echo "Building server"
-# ./nx build twenty-server
-
-# echo "Typechecking server"
-# ./nx typecheck twenty-server
-
-# echo "Building UI"
-# ./nx build twenty-ui
+# Check if the database has been initialized by checking if the core schema and workspace table exist
+if ./nx ts-node-no-deps-transpile-only twenty-server -- ./scripts/check-db-initialized.ts > /dev/null 2>&1; then
+  echo "Database already initialized, skipping reset"
+else
+  echo "Database not initialized, resetting database"
+  ./nx database:reset twenty-server > /dev/null
+fi
 
 # Ensure log directory exists
 mkdir -p "$TWILL_ENTRYPOINT_LOG_DIR"
