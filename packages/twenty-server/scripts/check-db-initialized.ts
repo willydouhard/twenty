@@ -17,7 +17,7 @@ async function checkDatabaseInitialized(): Promise<boolean> {
     await rawDataSource.destroy();
 
     return result[0]?.exists === true;
-  } catch (error) {
+  } catch {
     // If we can't connect or query, assume database is not initialized
     return false;
   }
