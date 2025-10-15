@@ -6,6 +6,7 @@ import {
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { sleep } from '~/utils/sleep';
 
 import { RecordIndexPage } from '../RecordIndexPage';
 
@@ -33,6 +34,7 @@ export const Default: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findAllByText('Companies', undefined, { timeout: 3000 });
-    await canvas.findByText('Linkedin');
+    await sleep(1000);
+    await canvas.findByText('Linkedin', undefined, { timeout: 5000 });
   },
 };

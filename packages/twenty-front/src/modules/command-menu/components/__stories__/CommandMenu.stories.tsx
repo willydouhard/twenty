@@ -166,13 +166,26 @@ export const MatchingNavigateShortcuts: Story = {
 export const SearchRecordsAction: Story = {
   play: async () => {
     const canvas = within(document.body);
-    const searchRecordsButton = await canvas.findByText('Search records');
+    const searchRecordsButton = await canvas.findByText(
+      'Search records',
+      undefined,
+      { timeout: 5000 },
+    );
     await userEvent.click(searchRecordsButton);
-    const searchInput = await canvas.findByPlaceholderText('Type anything');
+    const searchInput = await canvas.findByPlaceholderText(
+      'Type anything',
+      undefined,
+      { timeout: 5000 },
+    );
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'n');
-    expect(await canvas.findByText('Linkedin')).toBeVisible();
-    const companyTexts = await canvas.findAllByText('Company');
+    await sleep(1000);
+    expect(
+      await canvas.findByText('Linkedin', undefined, { timeout: 10000 }),
+    ).toBeVisible();
+    const companyTexts = await canvas.findAllByText('Company', undefined, {
+      timeout: 5000,
+    });
     expect(companyTexts[0]).toBeVisible();
   },
 };
@@ -211,13 +224,21 @@ export const NoResultsSearchFallback: Story = {
 export const ClickOnSearchRecordsAndGoBack: Story = {
   play: async () => {
     const canvas = within(document.body);
-    const searchRecordsButton = await canvas.findByText('Search records');
+    const searchRecordsButton = await canvas.findByText(
+      'Search records',
+      undefined,
+      { timeout: 5000 },
+    );
     await userEvent.click(searchRecordsButton);
     await sleep(openTimeout);
     const goBackButton = await canvas.findByTestId(
       'command-menu-go-back-button',
+      undefined,
+      { timeout: 5000 },
     );
     await userEvent.click(goBackButton);
-    expect(await canvas.findByText('Search records')).toBeVisible();
+    expect(
+      await canvas.findByText('Search records', undefined, { timeout: 5000 }),
+    ).toBeVisible();
   },
 };

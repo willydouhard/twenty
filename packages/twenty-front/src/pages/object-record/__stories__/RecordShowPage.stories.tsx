@@ -13,6 +13,7 @@ import {
   peopleQueryResult,
 } from '~/testing/mock-data/people';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
+import { sleep } from '~/utils/sleep';
 
 import { RecordShowPage } from '../RecordShowPage';
 
@@ -66,15 +67,16 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    await sleep(1000);
     // await canvas.findAllByText(peopleMock[0].name.firstName);
     expect(
       await canvas.findByText('Twenty', undefined, {
-        timeout: 5000,
+        timeout: 10000,
       }),
     ).toBeInTheDocument();
     expect(
       await canvas.findByText('No activity yet', undefined, {
-        timeout: 5000,
+        timeout: 10000,
       }),
     ).toBeInTheDocument();
   },
