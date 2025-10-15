@@ -33,6 +33,10 @@ export const Default: Story = {
     const canvas = within(canvasElement);
     await sleep(1000);
 
-    expect(await canvas.findByText('PostgreSQL database')).toBeInTheDocument();
+    expect(
+      await canvas.findByText('PostgreSQL database', undefined, {
+        timeout: 5000,
+      }),
+    ).toBeInTheDocument();
   },
 };

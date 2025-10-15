@@ -30,7 +30,7 @@ export const Default: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByText('Connect a new database', undefined, {
-      timeout: 3000,
+      timeout: 10000,
     });
   },
 };

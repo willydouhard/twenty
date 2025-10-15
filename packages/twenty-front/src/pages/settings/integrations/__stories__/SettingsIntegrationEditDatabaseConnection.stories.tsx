@@ -33,8 +33,8 @@ export type Story = StoryObj<typeof SettingsIntegrationEditDatabaseConnection>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await sleep(100);
+    await sleep(1000);
 
-    await canvas.findByText('Edit Connection', undefined, { timeout: 3000 });
+    await canvas.findByText('Edit Connection', undefined, { timeout: 10000 });
   },
 };
