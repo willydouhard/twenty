@@ -70,10 +70,16 @@ export const mapObjectMetadataToGraphQLQuery = ({
         );
       }
 
-      return fieldMetadata.morphRelations.map((morphRelation) => ({
-        gqlField: morphRelation.sourceFieldMetadata.name,
-        fieldMetadata: fieldMetadata,
-      }));
+      return [
+        ...fieldMetadata.morphRelations.map((morphRelation) => ({
+          gqlField: morphRelation.sourceFieldMetadata.name,
+          fieldMetadata: fieldMetadata,
+        })),
+        {
+          gqlField: fieldMetadata.settings?.joinColumnName,
+          fieldMetadata: fieldMetadata,
+        },
+      ];
     });
 
   const readableFields = objectMetadataItem.readableFields.filter(
