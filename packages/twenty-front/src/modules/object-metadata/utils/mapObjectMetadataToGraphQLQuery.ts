@@ -71,7 +71,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
       }
 
       return fieldMetadata.morphRelations.map((morphRelation) => ({
-        gqlField: morphRelation.sourceFieldMetadata.name,
+        gqlField: morphRelation.targetFieldMetadata.name,
         fieldMetadata: fieldMetadata,
       }));
     });
