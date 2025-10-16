@@ -5,6 +5,8 @@ import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/r
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useFocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useFocusRecordTableCell';
+import { RECORD_TABLE_HTML_ID } from '@/object-record/record-table/constants/RecordTableHtmlId';
+import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -17,7 +19,7 @@ import {
   useFloating,
   type MiddlewareState,
 } from '@floating-ui/react';
-import { useContext, type ReactElement } from 'react';
+import { useContext, useMemo, type ReactElement } from 'react';
 
 const StyledEditableCellEditModeContainer = styled.div<{
   isFieldInputOnly: boolean;
@@ -93,6 +95,36 @@ export const RecordTableCellEditMode = ({
 
   const { focusRecordTableCell } = useFocusRecordTableCell();
 
+  const floatingStylesWithWidth = useMemo(() => {
+    const recordTableElement = document.querySelector<HTMLDivElement>(
+      `#${RECORD_TABLE_HTML_ID}`,
+    );
+
+    if (!recordTableElement) {
+      return floatingStyles;
+    }
+
+    const columnWidthCSSVariable =
+      getRecordTableColumnFieldWidthCSSVariableName(cellPosition.column);
+    const columnWidthValue = getComputedStyle(
+      recordTableElement,
+    ).getPropertyValue(columnWidthCSSVariable);
+
+    const columnWidthPx = parseFloat(columnWidthValue);
+
+    if (!columnWidthPx || isNaN(columnWidthPx)) {
+      return floatingStyles;
+    }
+
+    const floatingInputWidth = Math.min(columnWidthPx * 1.24, 340);
+
+    return {
+      ...floatingStyles,
+      width: `${floatingInputWidth}px`,
+      maxWidth: '340px',
+    };
+  }, [floatingStyles, cellPosition.column]);
+
   return (
     <StyledEditableCellEditModeContainer
       ref={refs.setReference}
@@ -110,7 +142,7 @@ export const RecordTableCellEditMode = ({
       ) : (
         <OverlayContainer
           ref={refs.setFloating}
-          style={floatingStyles}
+          style={floatingStylesWithWidth}
           borderRadius="sm"
           hasDangerBorder={isFieldInError}
         >
