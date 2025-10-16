@@ -1,8 +1,10 @@
 import assert from 'assert';
+import * as crypto from 'crypto';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import {
   AppManifest,
+  AssetManifest,
   CoreEntityManifest,
   PackageJson,
 } from '../types/config.types';
@@ -103,6 +105,35 @@ const loadFolderContentIntoJson = async (
   return sources;
 };
 
+const loadAssets = async (appPath: string): Promise<AssetManifest[]> => {
+  const assets: AssetManifest[] = [];
+  const assetsPath = path.join(appPath, 'assets');
+
+  if (await fs.pathExists(assetsPath)) {
+    const assetFiles = await fs.readdir(assetsPath);
+
+    for (const assetFile of assetFiles) {
+      const assetFilePath = path.join(assetsPath, assetFile);
+      const stats = await fs.stat(assetFilePath);
+
+      if (stats.isFile()) {
+        const fileBuffer = await fs.readFile(assetFilePath);
+        const hash = crypto
+          .createHash('sha256')
+          .update(fileBuffer)
+          .digest('hex');
+
+        assets.push({
+          path: assetFile,
+          hash,
+        });
+      }
+    }
+  }
+
+  return assets;
+};
+
 export const loadManifest = async (
   appPath: string,
 ): Promise<{
@@ -133,6 +164,8 @@ export const loadManifest = async (
     (manifest, path) => validateSchema('serverlessFunction', manifest, path),
   );
 
+  const assets = await loadAssets(appPath);
+
   return {
     packageJson: rawPackageJson,
     yarnLock: rawYarnLock,
@@ -141,6 +174,7 @@ export const loadManifest = async (
       agents,
       objects,
       serverlessFunctions,
+      assets: assets.length > 0 ? assets : undefined,
     },
   };
 };

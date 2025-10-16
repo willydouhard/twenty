@@ -11,10 +11,12 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 import {
   AgentManifest,
+  AssetManifest,
   ObjectManifest,
   ServerlessFunctionManifest,
   ServerlessFunctionTriggerManifest,
 } from 'src/engine/core-modules/application/types/application.types';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
@@ -41,6 +43,7 @@ export class ApplicationSyncService {
     private readonly agentService: AgentService,
     private readonly databaseEventTriggerV2Service: DatabaseEventTriggerV2Service,
     private readonly cronTriggerV2Service: CronTriggerV2Service,
+    private readonly fileStorageService: FileStorageService,
   ) {}
 
   public async synchronizeFromManifest({
@@ -50,7 +53,7 @@ export class ApplicationSyncService {
     yarnLock,
   }: ApplicationInput & {
     workspaceId: string;
-  }) {
+  }): Promise<{ missingAssets?: string[] }> {
     const application = await this.syncApplication({
       workspaceId,
       manifest,
@@ -77,7 +80,16 @@ export class ApplicationSyncService {
       serverlessFunctionLayerId: application.serverlessFunctionLayerId,
     });
 
+    const missingAssets = await this.checkMissingAssets({
+      assets: manifest.assets || [],
+      applicationId: application.id,
+    });
+
     this.logger.log('✅ Application sync from manifest completed');
+
+    return {
+      missingAssets: missingAssets.length > 0 ? missingAssets : undefined,
+    };
   }
 
   private async syncApplication({
@@ -651,5 +663,29 @@ export class ApplicationSyncService {
         workspaceId,
       );
     }
+  }
+
+  private async checkMissingAssets({
+    assets,
+    applicationId,
+  }: {
+    assets: AssetManifest[];
+    applicationId: string;
+  }): Promise<string[]> {
+    const missingAssets: string[] = [];
+    const assetFolderPath = `applications/${applicationId}/assets`;
+
+    for (const asset of assets) {
+      const assetExists = await this.fileStorageService.checkFileExists({
+        folderPath: assetFolderPath,
+        filename: asset.hash,
+      });
+
+      if (!assetExists) {
+        missingAssets.push(asset.hash);
+      }
+    }
+
+    return missingAssets;
   }
 }

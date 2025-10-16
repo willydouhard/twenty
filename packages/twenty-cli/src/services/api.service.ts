@@ -4,6 +4,7 @@ import {
   type ApiResponse,
   type AppManifest,
   type PackageJson,
+  type SyncApplicationResponse,
 } from '../types/config.types';
 import { ConfigService } from './config.service';
 
@@ -91,11 +92,13 @@ export class ApiService {
     packageJson: PackageJson;
     yarnLock: string;
     manifest: AppManifest;
-  }): Promise<ApiResponse> {
+  }): Promise<ApiResponse<SyncApplicationResponse>> {
     try {
       const mutation = `
         mutation SyncApplication($manifest: JSON!, $packageJson: JSON!, $yarnLock: String!) {
-          syncApplication(manifest: $manifest, packageJson: $packageJson, yarnLock: $yarnLock)
+          syncApplication(manifest: $manifest, packageJson: $packageJson, yarnLock: $yarnLock) {
+            missingAssets
+          }
         }
       `;
 
@@ -132,6 +135,66 @@ export class ApiService {
         success: true,
         data: response.data.data.syncApplication,
         message: `Successfully synced application: ${manifest.name}`,
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return {
+          success: false,
+          error: error.response.data?.errors?.[0]?.message || error.message,
+        };
+      }
+      throw error;
+    }
+  }
+
+  async upsertAsset({
+    applicationId,
+    assetHash,
+    assetContent,
+  }: {
+    applicationId: string;
+    assetHash: string;
+    assetContent: string;
+  }): Promise<ApiResponse> {
+    try {
+      const mutation = `
+        mutation UpsertAsset($applicationId: String!, $assetHash: String!, $assetContent: String!) {
+          upsertAsset(applicationId: $applicationId, assetHash: $assetHash, assetContent: $assetContent)
+        }
+      `;
+
+      const variables = {
+        applicationId,
+        assetHash,
+        assetContent,
+      };
+
+      const response: AxiosResponse = await this.client.post(
+        '/metadata',
+        {
+          query: mutation,
+          variables,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+            'x-schema-version': '6',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error: response.data.errors[0]?.message || 'Failed to upsert asset',
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.upsertAsset,
+        message: 'Successfully uploaded asset',
       };
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
