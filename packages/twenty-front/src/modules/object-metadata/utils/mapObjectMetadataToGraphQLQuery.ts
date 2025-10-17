@@ -70,10 +70,22 @@ export const mapObjectMetadataToGraphQLQuery = ({
         );
       }
 
-      return fieldMetadata.morphRelations.map((morphRelation) => ({
-        gqlField: morphRelation.sourceFieldMetadata.name,
-        fieldMetadata: fieldMetadata,
-      }));
+      // For morph relations, include the join column field (e.g., activityId) alongside
+      // the source field names (e.g., opportunity, company) to ensure the ID reference is queryable
+      return [
+        ...(isDefined(fieldMetadata.settings?.joinColumnName)
+          ? [
+              {
+                gqlField: fieldMetadata.settings.joinColumnName,
+                fieldMetadata: fieldMetadata,
+              },
+            ]
+          : []),
+        ...fieldMetadata.morphRelations.map((morphRelation) => ({
+          gqlField: morphRelation.sourceFieldMetadata.name,
+          fieldMetadata: fieldMetadata,
+        })),
+      ];
     });
 
   const readableFields = objectMetadataItem.readableFields.filter(
