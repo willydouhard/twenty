@@ -57,6 +57,14 @@ export class ApplicationEntity {
   @Column({ nullable: false, type: 'uuid' })
   serverlessFunctionLayerId: string;
 
+  @Column({ type: 'jsonb', default: [] })
+  assetsMetadata: Array<{
+    name: string;
+    hash: string;
+    mimeType: string;
+    path: string;
+  }>;
+
   @OneToOne(
     () => ServerlessFunctionLayerEntity,
     (serverlessFunctionLayer) => serverlessFunctionLayer.application,
