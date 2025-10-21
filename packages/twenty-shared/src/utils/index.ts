@@ -28,6 +28,7 @@ export { computeEmptyGqlOperationFilterForEmails } from './filter/computeEmptyGq
 export { computeEmptyGqlOperationFilterForLinks } from './filter/computeEmptyGqlOperationFilterForLinks';
 export { computeRecordGqlOperationFilter } from './filter/computeRecordGqlOperationFilter';
 export { isEmptinessOperand } from './filter/isEmptinessOperand';
+export { resolveObjectRecordFilterDates } from './filter/resolveObjectRecordFilterDates';
 export { turnAnyFieldFilterIntoRecordGqlFilter } from './filter/turnAnyFieldFilterIntoRecordGqlFilter';
 export type {
   RecordFilter,

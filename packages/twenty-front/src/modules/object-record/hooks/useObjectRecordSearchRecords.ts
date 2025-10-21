@@ -6,7 +6,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { type WatchQueryFetchPolicy } from '@apollo/client';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, resolveObjectRecordFilterDates } from 'twenty-shared/utils';
 import {
   type ObjectRecordFilterInput,
   useSearchQuery,
@@ -38,13 +38,17 @@ export const useObjectRecordSearchRecords = ({
   const { enqueueErrorSnackBar } = useSnackBar();
   const apolloCoreClient = useApolloCoreClient();
 
+  const resolvedFilter = useMemo(() => {
+    return resolveObjectRecordFilterDates(filter ?? {}) ?? {};
+  }, [filter]);
+
   const { data, loading, error, previousData } = useSearchQuery({
     skip:
       skip || !areDefined || !currentWorkspaceMember || !isDefined(searchInput),
     variables: {
       searchInput: searchInput ?? '',
       limit: limit ?? MAX_SEARCH_RESULTS,
-      filter: filter ?? {},
+      filter: resolvedFilter,
       includedObjectNameSingulars: objectNameSingulars,
     },
     fetchPolicy: fetchPolicy,
