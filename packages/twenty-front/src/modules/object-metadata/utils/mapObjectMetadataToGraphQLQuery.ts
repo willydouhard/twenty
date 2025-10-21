@@ -70,8 +70,11 @@ export const mapObjectMetadataToGraphQLQuery = ({
         );
       }
 
+      // For morph relations, generate join column field names with 'Id' suffix
+      // Note: sourceFieldMetadata only contains {id, name}, not settings.joinColumnName
+      // The join column naming convention is <sourceFieldName>Id
       return fieldMetadata.morphRelations.map((morphRelation) => ({
-        gqlField: morphRelation.sourceFieldMetadata.name,
+        gqlField: `${morphRelation.sourceFieldMetadata.name}Id`,
         fieldMetadata: fieldMetadata,
       }));
     });

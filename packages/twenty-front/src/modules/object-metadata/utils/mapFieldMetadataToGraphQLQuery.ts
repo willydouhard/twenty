@@ -50,6 +50,9 @@ export const mapFieldMetadataToGraphQLQuery = ({
     let gqlMorphField = '';
     for (const morphRelation of fieldMetadata.morphRelations ?? []) {
       const relationFieldName = morphRelation.sourceFieldMetadata.name;
+      // For morph relations, the join column name follows the pattern <sourceFieldName>Id
+      // Note: sourceFieldMetadata only contains {id, name}, not settings.joinColumnName
+      const joinColumnName = `${relationFieldName}Id`;
       const relationMetadataItem = objectMetadataItems.find(
         (objectMetadataItem) =>
           objectMetadataItem.id === morphRelation.targetObjectMetadata.id,
@@ -96,7 +99,8 @@ export const mapFieldMetadataToGraphQLQuery = ({
       }
 
       if (fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE) {
-        if (gqlField === fieldMetadata.settings?.joinColumnName) {
+        // Check if this gqlField IS the join column field itself
+        if (gqlField === joinColumnName) {
           gqlMorphField += `${gqlField}
     `;
           continue;
