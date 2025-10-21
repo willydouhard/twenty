@@ -16,10 +16,18 @@ export type PackageJson = {
   devDependencies?: object;
 };
 
+export type AssetManifest = {
+  name: string;
+  hash: string;
+  mimeType: string;
+  path: string;
+};
+
 export type AppManifest = PackageJson & {
   agents: AgentManifest[];
   objects: ObjectManifest[];
   serverlessFunctions: ServerlessFunctionManifest[];
+  assets?: AssetManifest[];
 };
 
 export type ServerlessFunctionManifest = {
