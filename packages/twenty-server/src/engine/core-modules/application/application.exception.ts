@@ -5,4 +5,6 @@ export class ApplicationException extends CustomException<ApplicationExceptionCo
 export enum ApplicationExceptionCode {
   OBJECT_NOT_FOUND = 'OBJECT_NOT_FOUND',
   SERVERLESS_FUNCTION_NOT_FOUND = 'SERVERLESS_FUNCTION_NOT_FOUND',
+  INVALID_ASSET_HASH = 'INVALID_ASSET_HASH',
+  APPLICATION_NOT_FOUND = 'APPLICATION_NOT_FOUND',
 }

@@ -5,6 +5,7 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { ApplicationResolver } from 'src/engine/core-modules/application/application.resolver';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-sync.service';
+import { ApplicationAssetService } from 'src/engine/core-modules/application/services/application-asset.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -15,6 +16,7 @@ import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serve
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
 import { DatabaseEventTriggerModule } from 'src/engine/metadata-modules/database-event-trigger/database-event-trigger.module';
 import { CronTriggerModule } from 'src/engine/metadata-modules/cron-trigger/cron-trigger.module';
+import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 
 @Module({
   imports: [
@@ -27,7 +29,13 @@ import { CronTriggerModule } from 'src/engine/metadata-modules/cron-trigger/cron
     ServerlessFunctionModule,
     DatabaseEventTriggerModule,
     CronTriggerModule,
+    FileStorageModule,
   ],
-  providers: [ApplicationResolver, ApplicationService, ApplicationSyncService],
+  providers: [
+    ApplicationResolver,
+    ApplicationService,
+    ApplicationSyncService,
+    ApplicationAssetService,
+  ],
 })
 export class ApplicationModule {}
