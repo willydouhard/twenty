@@ -471,6 +471,11 @@ export enum CalendarChannelVisibility {
   SHARE_EVERYTHING = 'SHARE_EVERYTHING'
 }
 
+export type CancelWorkflowRunInput = {
+  /** ID of the workflow run to cancel */
+  workflowRunId: Scalars['UUID'];
+};
+
 export type Captcha = {
   __typename?: 'Captcha';
   provider?: Maybe<CaptchaDriverType>;
@@ -1656,6 +1661,7 @@ export type Mutation = {
   cancelSwitchBillingInterval: BillingUpdateOutput;
   cancelSwitchBillingPlan: BillingUpdateOutput;
   cancelSwitchMeteredPrice: BillingUpdateOutput;
+  cancelWorkflowRun: Scalars['Boolean'];
   checkCustomDomainValidRecords?: Maybe<DomainValidRecords>;
   checkPublicDomainValidRecords?: Maybe<DomainValidRecords>;
   checkoutSession: BillingSessionOutput;
@@ -1852,6 +1858,11 @@ export type MutationAuthorizeAppArgs = {
   clientId: Scalars['String'];
   codeChallenge?: InputMaybe<Scalars['String']>;
   redirectUrl: Scalars['String'];
+};
+
+
+export type MutationCancelWorkflowRunArgs = {
+  input: CancelWorkflowRunInput;
 };
 
 
@@ -5859,6 +5870,13 @@ export type ActivateWorkflowVersionMutationVariables = Exact<{
 
 
 export type ActivateWorkflowVersionMutation = { __typename?: 'Mutation', activateWorkflowVersion: boolean };
+
+export type CancelWorkflowRunMutationVariables = Exact<{
+  input: CancelWorkflowRunInput;
+}>;
+
+
+export type CancelWorkflowRunMutation = { __typename?: 'Mutation', cancelWorkflowRun: boolean };
 
 export type ComputeStepOutputSchemaMutationVariables = Exact<{
   input: ComputeStepOutputSchemaInput;
@@ -12998,6 +13016,37 @@ export function useActivateWorkflowVersionMutation(baseOptions?: Apollo.Mutation
 export type ActivateWorkflowVersionMutationHookResult = ReturnType<typeof useActivateWorkflowVersionMutation>;
 export type ActivateWorkflowVersionMutationResult = Apollo.MutationResult<ActivateWorkflowVersionMutation>;
 export type ActivateWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<ActivateWorkflowVersionMutation, ActivateWorkflowVersionMutationVariables>;
+export const CancelWorkflowRunDocument = gql`
+    mutation CancelWorkflowRun($input: CancelWorkflowRunInput!) {
+  cancelWorkflowRun(input: $input)
+}
+    `;
+export type CancelWorkflowRunMutationFn = Apollo.MutationFunction<CancelWorkflowRunMutation, CancelWorkflowRunMutationVariables>;
+
+/**
+ * __useCancelWorkflowRunMutation__
+ *
+ * To run a mutation, you first call `useCancelWorkflowRunMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCancelWorkflowRunMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [cancelWorkflowRunMutation, { data, loading, error }] = useCancelWorkflowRunMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCancelWorkflowRunMutation(baseOptions?: Apollo.MutationHookOptions<CancelWorkflowRunMutation, CancelWorkflowRunMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CancelWorkflowRunMutation, CancelWorkflowRunMutationVariables>(CancelWorkflowRunDocument, options);
+      }
+export type CancelWorkflowRunMutationHookResult = ReturnType<typeof useCancelWorkflowRunMutation>;
+export type CancelWorkflowRunMutationResult = Apollo.MutationResult<CancelWorkflowRunMutation>;
+export type CancelWorkflowRunMutationOptions = Apollo.BaseMutationOptions<CancelWorkflowRunMutation, CancelWorkflowRunMutationVariables>;
 export const ComputeStepOutputSchemaDocument = gql`
     mutation ComputeStepOutputSchema($input: ComputeStepOutputSchemaInput!) {
   computeStepOutputSchema(input: $input)

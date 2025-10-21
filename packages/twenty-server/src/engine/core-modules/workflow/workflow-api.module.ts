@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkflowTriggerController } from 'src/engine/core-modules/workflow/controllers/workflow-trigger.controller';
 import { WorkflowBuilderResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-builder.resolver';
+import { WorkflowRunResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-run.resolver';
 import { WorkflowTriggerResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-trigger.resolver';
 import { WorkflowVersionEdgeResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-version-edge.resolver';
 import { WorkflowVersionStepResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver';
@@ -33,6 +34,7 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     WorkflowVersionStepResolver,
     WorkflowVersionEdgeResolver,
     WorkflowVersionResolver,
+    WorkflowRunResolver,
   ],
 })
 export class WorkflowApiModule {}

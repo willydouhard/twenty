@@ -1,6 +1,7 @@
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
+import { CancelRunWorkflowRunSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-run-actions/components/CancelRunWorkflowRunSingleRecordAction';
 import { SeeVersionWorkflowRunSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-run-actions/components/SeeVersionWorkflowRunSingleRecordAction';
 import { SeeWorkflowWorkflowRunSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-run-actions/components/SeeWorkflowWorkflowRunSingleRecordAction';
 import { WorkflowRunSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-run-actions/types/WorkflowRunSingleRecordActionsKeys';
@@ -9,7 +10,11 @@ import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { msg } from '@lingui/core/macro';
-import { IconSettingsAutomation, IconVersions } from 'twenty-ui/display';
+import {
+  IconPlayerPause,
+  IconSettingsAutomation,
+  IconVersions,
+} from 'twenty-ui/display';
 
 export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
   config: {
@@ -45,6 +50,22 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       ],
       component: <SeeVersionWorkflowRunSingleRecordAction />,
     },
+    [WorkflowRunSingleRecordActionKeys.CANCEL_RUN]: {
+      key: WorkflowRunSingleRecordActionKeys.CANCEL_RUN,
+      label: msg`Cancel run`,
+      shortLabel: msg`Cancel run`,
+      position: 2,
+      isPinned: false,
+      type: ActionType.Standard,
+      scope: ActionScope.RecordSelection,
+      Icon: IconPlayerPause,
+      shouldBeRegistered: () => true,
+      availableOn: [
+        ActionViewType.SHOW_PAGE,
+        ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ],
+      component: <CancelRunWorkflowRunSingleRecordAction />,
+    },
   },
   actionKeys: [
     SingleRecordActionKeys.ADD_TO_FAVORITES,
@@ -68,63 +89,63 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
   propertiesToOverwrite: {
     [SingleRecordActionKeys.ADD_TO_FAVORITES]: {
       isPinned: false,
-      position: 2,
+      position: 3,
     },
     [SingleRecordActionKeys.REMOVE_FROM_FAVORITES]: {
       isPinned: false,
-      position: 3,
+      position: 4,
     },
     [SingleRecordActionKeys.EXPORT_FROM_RECORD_INDEX]: {
-      position: 4,
+      position: 5,
       label: msg`Export run`,
     },
     [SingleRecordActionKeys.EXPORT_FROM_RECORD_SHOW]: {
-      position: 4,
+      position: 5,
       label: msg`Export run`,
     },
     [MultipleRecordsActionKeys.EXPORT]: {
-      position: 5,
+      position: 6,
       label: msg`Export runs`,
     },
     [NoSelectionRecordActionKeys.EXPORT_VIEW]: {
-      position: 6,
+      position: 7,
       label: msg`Export view`,
     },
     [NoSelectionRecordActionKeys.SEE_DELETED_RECORDS]: {
-      position: 7,
+      position: 8,
       label: msg`See deleted runs`,
     },
     [NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS]: {
-      position: 8,
+      position: 9,
       label: msg`Hide deleted runs`,
     },
     [SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD]: {
-      position: 9,
-    },
-    [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
       position: 10,
     },
-    [NoSelectionRecordActionKeys.GO_TO_WORKFLOWS]: {
+    [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
       position: 11,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_WORKFLOWS]: {
+      position: 12,
       isPinned: true,
     },
     [NoSelectionRecordActionKeys.GO_TO_PEOPLE]: {
-      position: 12,
-    },
-    [NoSelectionRecordActionKeys.GO_TO_COMPANIES]: {
       position: 13,
     },
-    [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
+    [NoSelectionRecordActionKeys.GO_TO_COMPANIES]: {
       position: 14,
     },
-    [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
+    [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
       position: 15,
     },
-    [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
+    [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
       position: 16,
     },
-    [NoSelectionRecordActionKeys.GO_TO_NOTES]: {
+    [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
       position: 17,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_NOTES]: {
+      position: 18,
     },
   },
 });

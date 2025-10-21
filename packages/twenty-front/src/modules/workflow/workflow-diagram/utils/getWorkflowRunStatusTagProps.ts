@@ -34,6 +34,13 @@ export const getWorkflowRunStatusTagProps = ({
     };
   }
 
+  if (workflowRunStatus === 'CANCELLED') {
+    return {
+      color: 'orange',
+      text: 'Cancelled',
+    };
+  }
+
   return {
     color: 'red',
     text: 'Failed',

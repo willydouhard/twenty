@@ -219,6 +219,37 @@ export class WorkflowRunWorkspaceService {
   }
 
   @WithLock('workflowRunId')
+  async cancelWorkflowRun({
+    workflowRunId,
+    workspaceId,
+  }: {
+    workflowRunId: string;
+    workspaceId: string;
+  }) {
+    const workflowRunToUpdate = await this.getWorkflowRunOrFail({
+      workflowRunId,
+      workspaceId,
+    });
+
+    if (
+      workflowRunToUpdate.status !== WorkflowRunStatus.RUNNING &&
+      workflowRunToUpdate.status !== WorkflowRunStatus.ENQUEUED
+    ) {
+      throw new WorkflowRunException(
+        'Can only cancel workflow runs with RUNNING or ENQUEUED status',
+        WorkflowRunExceptionCode.INVALID_OPERATION,
+      );
+    }
+
+    const partialUpdate = {
+      status: WorkflowRunStatus.CANCELLED,
+      endedAt: new Date().toISOString(),
+    };
+
+    await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
+  }
+
+  @WithLock('workflowRunId')
   async updateWorkflowRunStepInfo({
     stepId,
     stepInfo,

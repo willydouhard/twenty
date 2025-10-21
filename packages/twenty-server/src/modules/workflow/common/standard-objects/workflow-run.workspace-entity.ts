@@ -40,6 +40,7 @@ export enum WorkflowRunStatus {
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
   ENQUEUED = 'ENQUEUED',
+  CANCELLED = 'CANCELLED',
 }
 
 export type StepOutput = {
@@ -158,6 +159,12 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
         label: 'Enqueued',
         position: 4,
         color: 'blue',
+      },
+      {
+        value: WorkflowRunStatus.CANCELLED,
+        label: 'Cancelled',
+        position: 5,
+        color: 'orange',
       },
     ],
     defaultValue: "'NOT_STARTED'",
