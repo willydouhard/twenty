@@ -4,7 +4,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { PackageJson } from 'src/engine/core-modules/application/types/application.types';
+import {
+  AssetManifest,
+  PackageJson,
+} from 'src/engine/core-modules/application/types/application.types';
 
 @Injectable()
 export class ApplicationService {
@@ -58,6 +61,7 @@ export class ApplicationService {
       packageJson?: PackageJson;
       yarnLock?: string;
       packageChecksum?: string;
+      assetsMetadata?: AssetManifest[];
     },
   ): Promise<ApplicationEntity> {
     await this.applicationRepository.update({ id }, data);

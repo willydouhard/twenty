@@ -8,9 +8,12 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationAssetService } from 'src/engine/core-modules/application/services/application-asset.service';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
+import { SyncApplicationResponse } from 'src/engine/core-modules/application/dtos/sync-application-response.dto';
 import {
   AgentManifest,
+  AssetManifest,
   ObjectManifest,
   ServerlessFunctionManifest,
   ServerlessFunctionTriggerManifest,
@@ -33,6 +36,7 @@ export class ApplicationSyncService {
 
   constructor(
     private readonly applicationService: ApplicationService,
+    private readonly applicationAssetService: ApplicationAssetService,
     private readonly serverlessFunctionLayerService: ServerlessFunctionLayerService,
     private readonly objectMetadataServiceV2: ObjectMetadataServiceV2,
     private readonly serverlessFunctionV2Service: ServerlessFunctionV2Service,
@@ -50,7 +54,7 @@ export class ApplicationSyncService {
     yarnLock,
   }: ApplicationInput & {
     workspaceId: string;
-  }) {
+  }): Promise<SyncApplicationResponse> {
     const application = await this.syncApplication({
       workspaceId,
       manifest,
@@ -77,7 +81,18 @@ export class ApplicationSyncService {
       serverlessFunctionLayerId: application.serverlessFunctionLayerId,
     });
 
+    const missingAssets = await this.checkMissingAssets({
+      assetsToSync: manifest.assets || [],
+      workspaceId,
+      applicationId: application.id,
+    });
+
     this.logger.log('✅ Application sync from manifest completed');
+
+    return {
+      success: true,
+      missingAssets,
+    };
   }
 
   private async syncApplication({
@@ -126,6 +141,7 @@ export class ApplicationSyncService {
       name: manifest.name,
       description: manifest.description,
       version: manifest.version,
+      assetsMetadata: manifest.assets || [],
     });
 
     return application;
@@ -651,5 +667,32 @@ export class ApplicationSyncService {
         workspaceId,
       );
     }
+  }
+
+  private async checkMissingAssets({
+    assetsToSync,
+    workspaceId,
+    applicationId,
+  }: {
+    assetsToSync: AssetManifest[];
+    workspaceId: string;
+    applicationId: string;
+  }): Promise<string[]> {
+    const missingAssets: string[] = [];
+
+    for (const asset of assetsToSync) {
+      const exists = await this.applicationAssetService.checkAssetExists(
+        workspaceId,
+        applicationId,
+        asset.hash,
+        asset.mimeType,
+      );
+
+      if (!exists) {
+        missingAssets.push(asset.hash);
+      }
+    }
+
+    return missingAssets;
   }
 }
