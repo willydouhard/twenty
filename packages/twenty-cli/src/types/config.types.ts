@@ -22,10 +22,18 @@ export type PackageJson = {
   devDependencies?: object;
 };
 
+export type AssetManifest = {
+  name: string;
+  hash: string;
+  mimeType: string;
+  path: string;
+};
+
 export type AppManifest = PackageJson & {
   agents: AgentManifest[];
   objects: ObjectManifest[];
   serverlessFunctions: ServerlessFunctionManifest[];
+  assets?: AssetManifest[];
 };
 
 export type CoreEntityManifest =
@@ -94,6 +102,11 @@ export interface AgentResponseFormat {
   type: 'json' | 'text';
   schema?: Record<string, unknown>;
 }
+
+export type SyncApplicationResponse = {
+  success: boolean;
+  missingAssets: string[];
+};
 
 export interface ApiResponse<T = any> {
   success: boolean;

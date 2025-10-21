@@ -8,6 +8,11 @@ import {
 } from '../types/config.types';
 import { parseJsoncFile } from './jsonc-parser';
 import { validateSchema } from '../utils/schema-validator';
+import {
+  loadAssets,
+  extractAssetMetadata,
+  type AssetWithContent,
+} from './app-asset-loader';
 
 type Sources = { [key: string]: string | Sources };
 
@@ -109,6 +114,7 @@ export const loadManifest = async (
   packageJson: PackageJson;
   yarnLock: string;
   manifest: AppManifest;
+  assetsWithContent: AssetWithContent[];
 }> => {
   const packageJsonPath = await findPathFile(appPath, 'package.json');
   const rawPackageJson = await parseJsoncFile(packageJsonPath);
@@ -133,6 +139,9 @@ export const loadManifest = async (
     (manifest, path) => validateSchema('serverlessFunction', manifest, path),
   );
 
+  const assetsWithContent = await loadAssets(appPath);
+  const assetsMetadata = extractAssetMetadata(assetsWithContent);
+
   return {
     packageJson: rawPackageJson,
     yarnLock: rawYarnLock,
@@ -141,6 +150,8 @@ export const loadManifest = async (
       agents,
       objects,
       serverlessFunctions,
+      assets: assetsMetadata,
     },
+    assetsWithContent,
   };
 };
