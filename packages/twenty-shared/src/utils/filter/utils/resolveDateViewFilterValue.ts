@@ -56,11 +56,18 @@ export const variableDateViewFilterValuePartsSchema = z
   });
 
 const variableDateViewFilterValueSchema = z.string().transform((value) => {
-  const [direction, amount, unit] = value.split('_');
+  const regex = /^(PAST|NEXT|THIS)_(?:(\d+)_)?(DAY|WEEK|MONTH|YEAR)$/;
+  const match = value.match(regex);
+
+  if (!match) {
+    throw new Error(`Invalid relative date format: ${value}`);
+  }
+
+  const [, direction, amount, unit] = match;
 
   return variableDateViewFilterValuePartsSchema.parse({
     direction,
-    amount,
+    amount: amount ?? 'undefined',
     unit,
   });
 });
