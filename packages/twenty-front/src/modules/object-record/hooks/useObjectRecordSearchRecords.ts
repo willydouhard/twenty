@@ -2,11 +2,15 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useDoObjectMetadataItemsExist } from '@/object-metadata/hooks/useDoObjectMetadataItemsExist';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { type WatchQueryFetchPolicy } from '@apollo/client';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  resolveRelativeDatesInObjectRecordFilter,
+} from 'twenty-shared/utils';
 import {
   type ObjectRecordFilterInput,
   useSearchQuery,
@@ -38,13 +42,37 @@ export const useObjectRecordSearchRecords = ({
   const { enqueueErrorSnackBar } = useSnackBar();
   const apolloCoreClient = useApolloCoreClient();
 
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const allFieldMetadataItems = useMemo(() => {
+    return objectMetadataItems
+      .filter((item) => objectNameSingulars.includes(item.nameSingular))
+      .flatMap((item) => item.fields)
+      .map((field) => ({
+        id: field.id,
+        name: field.name,
+        type: field.type,
+        label: field.label,
+      }));
+  }, [objectMetadataItems, objectNameSingulars]);
+
+  const resolvedFilter = useMemo(() => {
+    if (!filter || !allFieldMetadataItems.length) {
+      return filter;
+    }
+    return resolveRelativeDatesInObjectRecordFilter(
+      filter,
+      allFieldMetadataItems,
+    );
+  }, [filter, allFieldMetadataItems]);
+
   const { data, loading, error, previousData } = useSearchQuery({
     skip:
       skip || !areDefined || !currentWorkspaceMember || !isDefined(searchInput),
     variables: {
       searchInput: searchInput ?? '',
       limit: limit ?? MAX_SEARCH_RESULTS,
-      filter: filter ?? {},
+      filter: resolvedFilter ?? {},
       includedObjectNameSingulars: objectNameSingulars,
     },
     fetchPolicy: fetchPolicy,
