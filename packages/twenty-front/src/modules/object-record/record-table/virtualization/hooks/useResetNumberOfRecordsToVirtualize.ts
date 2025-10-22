@@ -1,4 +1,3 @@
-import { NUMBER_OF_VIRTUALIZED_ROWS } from '@/object-record/record-table/virtualization/constants/NumberOfVirtualizedRows';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
@@ -14,10 +13,10 @@ export const useResetNumberOfRecordsToVirtualize = () => {
   const resetNumberOfRecordsToVirtualize = useRecoilCallback(
     ({ snapshot, set }) =>
       ({
-        records,
+        _records,
         totalCount,
       }: {
-        records: ObjectRecord[];
+        _records: ObjectRecord[];
         totalCount: number;
       }) => {
         const totalNumberOfRecordsToVirtualize = getSnapshotValue(
@@ -25,14 +24,10 @@ export const useResetNumberOfRecordsToVirtualize = () => {
           totalNumberOfRecordsToVirtualizeCallbackState,
         );
 
-        if (totalCount > NUMBER_OF_VIRTUALIZED_ROWS) {
-          if (totalNumberOfRecordsToVirtualize !== totalCount) {
-            set(totalNumberOfRecordsToVirtualizeCallbackState, totalCount);
-          }
-        } else {
-          if (totalNumberOfRecordsToVirtualize !== records.length) {
-            set(totalNumberOfRecordsToVirtualizeCallbackState, records.length);
-          }
+        // Use totalCount (not records.length) to ensure proper virtualization
+        // across all record counts, preventing pagination display issues
+        if (totalNumberOfRecordsToVirtualize !== totalCount) {
+          set(totalNumberOfRecordsToVirtualizeCallbackState, totalCount);
         }
       },
     [totalNumberOfRecordsToVirtualizeCallbackState],

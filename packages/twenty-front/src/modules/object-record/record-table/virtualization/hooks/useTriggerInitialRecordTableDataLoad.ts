@@ -161,7 +161,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
 
         if (isDefined(records)) {
           resetNumberOfRecordsToVirtualize({
-            records,
+            _records: records,
             totalCount,
           });
 
