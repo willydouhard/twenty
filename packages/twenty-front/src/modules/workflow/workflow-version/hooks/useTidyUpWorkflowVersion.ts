@@ -15,16 +15,10 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
-import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrganizedDiagram';
+import { type WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { UPDATE_WORKFLOW_VERSION_POSITIONS } from '@/workflow/workflow-version/graphql/mutations/updateWorkflowVersionPositions';
 
 export const useTidyUpWorkflowVersion = () => {
-  const [workflowDiagram, setWorkflowDiagram] = useRecoilComponentState(
-    workflowDiagramComponentState,
-  );
-
   const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -100,21 +94,11 @@ export const useTidyUpWorkflowVersion = () => {
     });
   };
 
-  const tidyUpWorkflowVersion = async () => {
-    if (!isDefined(workflowDiagram)) {
-      return;
-    }
-
-    const tidiedUpDiagram = getOrganizedDiagram(workflowDiagram);
-
-    const positions = tidiedUpDiagram.nodes.map((node) => ({
-      id: node.id,
-      position: node.position,
-    }));
-
+  const tidyUpWorkflowVersion = async (
+    diagram: WorkflowDiagram,
+    positions: { id: string; position: { x: number; y: number } }[],
+  ) => {
     await updateWorkflowVersionPosition(positions);
-
-    setWorkflowDiagram(tidiedUpDiagram);
   };
 
   return { tidyUpWorkflowVersion };
